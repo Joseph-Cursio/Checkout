@@ -5,4 +5,5 @@ enum PaymentMethod: String, Sendable {
     case bankTransfer
     case giftCard
     case storeCredit
+    case applePay
 }
