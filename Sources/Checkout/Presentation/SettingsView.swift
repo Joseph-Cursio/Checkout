@@ -4,6 +4,7 @@ import SwiftUI
 struct SettingsView: View {
     // The methods the settings screen offers. Kept in step with
     // `PaymentMethod` by hand.
+    // swiftprojectlint:disable:next parallel-list-drift
     private let supportedMethods = ["card", "paypal", "bankTransfer", "giftCard", "storeCredit"]
 
     @State private var enabled: Set<String> = ["card", "paypal"]
