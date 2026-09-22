@@ -29,6 +29,10 @@ final class CheckoutViewModel {
         order.discount = code
     }
 
+    func apply(discountCode: String) {
+        order.discount = DiscountCode(discountCode)
+    }
+
     func placeOrder() async {
         do {
             try await store.save(order)
