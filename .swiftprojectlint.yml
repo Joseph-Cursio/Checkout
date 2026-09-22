@@ -1,0 +1,41 @@
+# Checkout's architecture, written down where a tool can check it.
+#
+# `enabled_only` is deliberate: start with the handful of rules that encode
+# *this* app's architecture, not every rule the linter ships.
+
+enabled_only:
+  # Layers (essay §3)
+  - "Layer Dependency"
+  - "Architectural Boundary"
+  - "Circular Dependency"
+  - "View Model Direct DB Access"
+  # Domain types (essay §2)
+  - "Primitive Named For Its Domain Type"
+  # Isolation escape hatches (essay §4)
+  - "Unchecked Sendable"
+  - "Nonisolated Unsafe"
+  - "Preconcurrency Import"
+  - "Preconcurrency Conformance"
+  - "Observable Main Actor Missing"
+  # Coupling by shape (essay §5)
+  - "Parallel Enum Shape"
+  - "Parallel List Drift"
+  - "Manual Registration List"
+  # Exceptions are findings too (essay §7)
+  - "SwiftProjectLint Suppression"
+
+architectural_layers:
+  domain:
+    paths: ["Sources/Checkout/Domain/"]
+    may_depend_on: []
+    forbidden_imports: ["SwiftUI", "UIKit", "CoreData", "SwiftData"]
+    forbidden_types: ["URLSession", "UserDefaults"]
+  persistence:
+    paths: ["Sources/Checkout/Persistence/"]
+    may_depend_on: ["domain"]
+    forbidden_imports: ["SwiftUI", "UIKit"]
+  presentation:
+    paths: ["Sources/Checkout/Presentation/"]
+    may_depend_on: ["domain"]
+    forbidden_imports: ["CoreData", "SwiftData"]
+    forbidden_types: ["URLSession", "NSManagedObjectContext"]
