@@ -1,0 +1,27 @@
+# Runs Checkout's architectural fitness functions on every push and PR.
+name: Fitness functions
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  fitness:
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build SwiftProjectLint
+        run: |
+          git clone --depth 1 https://github.com/Joseph-Cursio/SwiftProjectLint.git "$RUNNER_TEMP/spl"
+          swift build --package-path "$RUNNER_TEMP/spl" --product CLI -c release
+          echo "SWIFTPROJECTLINT=$RUNNER_TEMP/spl/.build/release/CLI" >> "$GITHUB_ENV"
+
+      # Fails on warnings: a layer violation or an escape hatch stops the merge.
+      # Info findings (coupling by shape) are reported but don't fail the build.
+      - name: Lint the architecture
+        run: '"$SWIFTPROJECTLINT" . --threshold warning'
+
+      - name: Escape-hatch ratchet
+        run: scripts/ratchet.sh
