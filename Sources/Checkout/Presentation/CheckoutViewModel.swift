@@ -29,6 +29,15 @@ final class CheckoutViewModel {
         order.discount = code
     }
 
+    // Just for now: read history straight from Core Data until the
+    // order-history API lands.
+    func reorderLast() async {
+        let history = CoreDataOrderStore()
+        if let last = try? await history.recentOrders().first {
+            order.items = last.items
+        }
+    }
+
     func placeOrder() async {
         do {
             try await store.save(order)
