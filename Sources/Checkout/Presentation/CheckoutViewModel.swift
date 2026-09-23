@@ -29,7 +29,18 @@ final class CheckoutViewModel {
         order.discount = code
     }
 
-    func placeOrder() async {
+    private(set) var giftMessage: String?
+    private(set) var shippingLabel = ""
+
+    func placeOrder(isGift: Bool) async {
+        if isGift {
+            giftMessage = "A gift for you"
+            shippingLabel = "Ship to recipient, no prices"
+            order.discount = nil
+        } else {
+            giftMessage = nil
+            shippingLabel = "Ship to buyer"
+        }
         do {
             try await store.save(order)
             lastError = nil

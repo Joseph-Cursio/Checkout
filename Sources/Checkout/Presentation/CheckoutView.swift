@@ -15,7 +15,7 @@ struct CheckoutView: View {
                     .font(.headline)
             }
             Button("Place order") {
-                Task { await model.placeOrder() }
+                Task { await model.placeOrder(isGift: false) }
             }
         }
         .padding()
