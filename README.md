@@ -75,6 +75,7 @@ larger ones, so it's a false positive the essay discusses.
 |---|---|---|---|
 | `solid/d-concrete-dependency` | Dependency inversion | The view model stores `CoreDataOrderStore` instead of `any OrderStore` | `Single Implementation Protocol` and `Unused Protocol Abstraction` (info). They suggest *removing* the protocol. `Concrete Type Usage` stays silent because it exempts actors |
 | `solid/i-fat-store` | Interface segregation | `OrderStore` grows to 10 requirements | `Fat Protocol` (info) |
+| `solid/i-split-store` | Interface segregation | Splits that store into four role protocols; the view model depends on `OrderSaving` only | `Fat Protocol` goes quiet; `Single Implementation Protocol` flags the three roles no client uses |
 | `solid/o-string-switch` | Open/closed | A receipt formatter switches on `rawValue` with a `default:` arm | `String Switch Over Enum` (info) |
 | `solid/s-flag-parameter` | Single responsibility | `placeOrder(isGift: Bool)` picks between two code paths | `Boolean Control Coupling` (warning) |
 | `solid/l-downcast` | Liskov substitution | The view model downcasts its injected store to `CoreDataOrderStore` | `Swallowed Injection Downcast` (info) |
