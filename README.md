@@ -56,11 +56,44 @@ git log -S'applePay' -- Sources/Checkout/Presentation/SettingsView.swift
 Empty output means `applePay` was never in the settings list. It wasn't
 removed on purpose, it was never added, so adding it is safe.
 
+## SOLID branches
+
+A second set of branches accompanies the essay *SOLID, Checked*. They use their
+own config, so the fitness-functions branches above give the same output as
+before:
+
+```bash
+"$SWIFTPROJECTLINT" . --config .swiftprojectlint-solid.yml
+```
+
+On `main` that config reports one finding: `Direct Instantiation` at
+`CheckoutApp.swift:7`. That's the composition root, where constructing the
+store is correct. The rule exempts composition roots, but only recognises
+larger ones, so it's a false positive the essay discusses.
+
+| Branch | Principle | The change | What reports it |
+|---|---|---|---|
+| `solid/d-concrete-dependency` | Dependency inversion | The view model stores `CoreDataOrderStore` instead of `any OrderStore` | `Single Implementation Protocol` and `Unused Protocol Abstraction` (info). They suggest *removing* the protocol. `Concrete Type Usage` stays silent because it exempts actors |
+| `solid/i-fat-store` | Interface segregation | `OrderStore` grows to 10 requirements | `Fat Protocol` (info) |
+| `solid/o-string-switch` | Open/closed | A receipt formatter switches on `rawValue` with a `default:` arm | `String Switch Over Enum` (info) |
+| `solid/s-flag-parameter` | Single responsibility | `placeOrder(isGift: Bool)` picks between two code paths | `Boolean Control Coupling` (warning) |
+| `solid/l-downcast` | Liskov substitution | The view model downcasts its injected store to `CoreDataOrderStore` | `Swallowed Injection Downcast` (info) |
+| `solid/l-contract-test` | Liskov substitution | Adds a property-based contract test run against every `OrderStore` | No lint finding. **`swift test` fails** for the Core Data store |
+| `solid/l-contract-test-fixed` | Liskov substitution | Core Data stores line items and discount codes | `swift test` passes for both stores |
+
+The contract test found a real bug that was on `main` all along:
+`CoreDataOrderStore.recentOrders()` returned every order with no line items
+and no discount. The in-memory store used in tests kept both, so tests against
+it would pass while the app lost data. `main` keeps the bug on purpose, as the
+essay's example. The fix is on `solid/l-contract-test-fixed`.
+
 ## Building the app
 
 ```bash
 swift build
 swift run Checkout
 ```
+
+The `solid/l-contract-test` branches add a test target: run it with `swift test`.
 
 Requires macOS 14 and Swift 6.

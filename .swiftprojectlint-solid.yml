@@ -1,0 +1,31 @@
+# Rules for the essay "SOLID, Checked". Kept separate from
+# .swiftprojectlint.yml so the fitness-functions essay's quoted output doesn't
+# change. Run with:  swiftprojectlint . --config .swiftprojectlint-solid.yml
+#
+# Grouped by principle, from most checkable to least — the essay's order.
+
+enabled_only:
+  # Dependency inversion: toward abstraction...
+  - "Direct Instantiation"
+  - "Concrete Type Usage"
+  - "Missing Dependency Injection"
+  - "Singleton Usage"
+  # ...and back, against abstraction nothing uses
+  - "Single Implementation Protocol"
+  - "Mirror Protocol"
+  - "Unused Protocol Abstraction"
+  # Interface segregation
+  - "Fat Protocol"
+  - "Too Many Environment Objects"
+  # Open/closed: changes the compiler can't point to
+  - "String Switch Over Enum"
+  - "Parallel List Drift"
+  - "Manual Registration List"
+  - "Scattered Enum Mapping"
+  # Single responsibility: one direct check, the rest proxies
+  - "Boolean Control Coupling"
+  - "God View Model"
+  - "Large View Body"
+  # Liskov substitution: the outline only
+  - "Swallowed Injection Downcast"
+  - "Unconditional Trap"
