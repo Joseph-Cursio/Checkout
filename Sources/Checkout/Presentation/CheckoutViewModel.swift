@@ -8,8 +8,12 @@ final class CheckoutViewModel {
     private(set) var order: Order
     private(set) var lastError: String?
 
+    private(set) var canExportHistory = false
+
     init(store: any OrderStore) {
         self.store = store
+        // Only Core Data keeps enough history to export.
+        canExportHistory = (store as? CoreDataOrderStore) != nil
         order = Order(
             identifier: UUID(),
             items: [
