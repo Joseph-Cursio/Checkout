@@ -6,7 +6,17 @@ import PackageDescription
 let package = Package(
     name: "Checkout",
     platforms: [.macOS(.v14)],
+    dependencies: [
+        .package(url: "https://github.com/x-sheep/swift-property-based.git", from: "1.2.0")
+    ],
     targets: [
-        .executableTarget(name: "Checkout")
+        .executableTarget(name: "Checkout"),
+        .testTarget(
+            name: "CheckoutTests",
+            dependencies: [
+                "Checkout",
+                .product(name: "PropertyBased", package: "swift-property-based")
+            ]
+        )
     ]
 )
