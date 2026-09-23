@@ -81,6 +81,7 @@ larger ones, so it's a false positive the essay discusses.
 | `solid/l-downcast` | Liskov substitution | The view model downcasts its injected store to `CoreDataOrderStore` | `Swallowed Injection Downcast` (info) |
 | `solid/l-contract-test` | Liskov substitution | Adds a property-based contract test run against every `OrderStore` | No lint finding. **`swift test` fails** for the Core Data store |
 | `solid/l-contract-test-fixed` | Liskov substitution | Core Data stores line items and discount codes | `swift test` passes for both stores |
+| `solid/l-save-twice` | Liskov substitution | Adds a law that saving the same order twice stores it once | `swift test` fails for **both** stores: they agree with each other, and both keep duplicates |
 
 The contract test found a real bug that was on `main` all along:
 `CoreDataOrderStore.recentOrders()` returned every order with no line items
