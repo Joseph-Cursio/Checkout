@@ -4,11 +4,11 @@ import Observation
 @MainActor
 @Observable
 final class CheckoutViewModel {
-    private let store: any OrderStore
+    private let store: any OrderSaving
     private(set) var order: Order
     private(set) var lastError: String?
 
-    init(store: any OrderStore) {
+    init(store: any OrderSaving) {
         self.store = store
         order = Order(
             identifier: UUID(),

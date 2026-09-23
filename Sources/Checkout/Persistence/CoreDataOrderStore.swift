@@ -3,7 +3,7 @@ import Foundation
 
 /// Core Data implementation of `OrderStore`. The only file that knows
 /// Core Data exists.
-actor CoreDataOrderStore: OrderStore {
+actor CoreDataOrderStore: OrderSaving, OrderHistory, OrderAdministration, AnalyticsRecording {
     private let container: NSPersistentContainer
 
     init(inMemory: Bool = true) {
