@@ -19,12 +19,15 @@ actor CoreDataOrderStore: OrderStore {
     }
 
     func save(_ order: Order) async throws {
+        let encodedItems = try JSONEncoder().encode(order.items)
         let context = container.newBackgroundContext()
         try await context.perform {
             let record = NSEntityDescription.insertNewObject(forEntityName: "OrderRecord", into: context)
             record.setValue(order.identifier, forKey: "identifier")
             record.setValue(order.total.cents, forKey: "totalCents")
             record.setValue(order.paymentMethod.rawValue, forKey: "paymentMethod")
+            record.setValue(encodedItems, forKey: "lineItems")
+            record.setValue(order.discount?.value, forKey: "discountCode")
             try context.save()
         }
     }
@@ -37,9 +40,12 @@ actor CoreDataOrderStore: OrderStore {
                 guard
                     let identifier = record.value(forKey: "identifier") as? UUID,
                     let methodName = record.value(forKey: "paymentMethod") as? String,
-                    let method = PaymentMethod(rawValue: methodName)
+                    let method = PaymentMethod(rawValue: methodName),
+                    let encodedItems = record.value(forKey: "lineItems") as? Data,
+                    let items = try? JSONDecoder().decode([LineItem].self, from: encodedItems)
                 else { return nil }
-                return Order(identifier: identifier, items: [], paymentMethod: method, discount: nil)
+                let discount = (record.value(forKey: "discountCode") as? String).map(DiscountCode.init)
+                return Order(identifier: identifier, items: items, paymentMethod: method, discount: discount)
             }
         }
     }
@@ -50,7 +56,9 @@ actor CoreDataOrderStore: OrderStore {
         entity.properties = [
             attribute("identifier", .UUIDAttributeType),
             attribute("totalCents", .integer64AttributeType),
-            attribute("paymentMethod", .stringAttributeType)
+            attribute("paymentMethod", .stringAttributeType),
+            attribute("lineItems", .binaryDataAttributeType),
+            optionalAttribute("discountCode", .stringAttributeType)
         ]
         let model = NSManagedObjectModel()
         model.entities = [entity]
@@ -61,6 +69,12 @@ actor CoreDataOrderStore: OrderStore {
         let attribute = NSAttributeDescription()
         attribute.name = name
         attribute.attributeType = type
+        return attribute
+    }
+
+    private static func optionalAttribute(_ name: String, _ type: NSAttributeType) -> NSAttributeDescription {
+        let attribute = attribute(name, type)
+        attribute.isOptional = true
         return attribute
     }
 }

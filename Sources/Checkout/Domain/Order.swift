@@ -1,6 +1,6 @@
 import Foundation
 
-struct LineItem: Hashable, Sendable {
+struct LineItem: Hashable, Sendable, Codable {
     let name: String
     let price: Money
     let quantity: Int

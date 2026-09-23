@@ -1,7 +1,7 @@
 import Foundation
 
 /// An amount of money in minor units (cents), so arithmetic never rounds.
-struct Money: Hashable, Sendable, Comparable {
+struct Money: Hashable, Sendable, Comparable, Codable {
     let cents: Int
 
     static func + (lhs: Money, rhs: Money) -> Money {
