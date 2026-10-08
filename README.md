@@ -66,18 +66,23 @@ before:
 "$SWIFTPROJECTLINT" . --config .swiftprojectlint-solid.yml
 ```
 
-On `main` that config reports nothing. It used to report one finding,
-`Direct Instantiation` at `CheckoutApp.swift:7`: the composition root, where
-constructing the store is correct. The rule recognised only larger roots, so
-it was a false positive. SwiftProjectLint now exempts an `App`'s stored
-properties as it already did its `init()`, and the essay tells the finding as
-reported, then fixed.
+On `main` that config reports one finding, `Unused Protocol Requirement`
+(info) at `OrderStore.swift:5`. `OrderStore` requires `recentOrders()`, and
+nothing in the app calls it, through the protocol or otherwise. It's the method
+whose bug the contract test finds, below. The rule is opt-in, so the config
+lists it by name.
+
+The config used to report a different finding, `Direct Instantiation` at
+`CheckoutApp.swift:7`: the composition root, where constructing the store is
+correct. The rule recognised only larger roots, so it was a false positive.
+SwiftProjectLint now exempts an `App`'s stored properties as it already did
+its `init()`, and the essay tells the finding as reported, then fixed.
 
 | Branch | Principle | The change | What reports it |
 |---|---|---|---|
 | `solid/d-concrete-dependency` | Dependency inversion | The view model stores `CoreDataOrderStore` instead of `any OrderStore` | `Single Implementation Protocol` and `Unused Protocol Abstraction` (info). They suggest *removing* the protocol. `Concrete Type Usage` stays silent because it exempts actors |
-| `solid/i-fat-store` | Interface segregation | `OrderStore` grows to 10 requirements | `Fat Protocol` (info) |
-| `solid/i-split-store` | Interface segregation | Splits that store into four role protocols; the view model depends on `OrderSaving` only | `Fat Protocol` goes quiet; `Single Implementation Protocol` flags the three roles no client uses |
+| `solid/i-fat-store` | Interface segregation | `OrderStore` grows to 10 requirements | `Fat Protocol` (info), and `Unused Protocol Requirement` (info) for the nine requirements its one client doesn't call: all but `save(_:)` |
+| `solid/i-split-store` | Interface segregation | Splits that store into four role protocols; the view model depends on `OrderSaving` only | `Fat Protocol` and `Unused Protocol Requirement` go quiet; `Single Implementation Protocol` flags the three roles no client uses |
 | `solid/o-string-switch` | Open/closed | A receipt formatter switches on `rawValue` with a `default:` arm | `String Switch Over Enum` (info) |
 | `solid/s-flag-parameter` | Single responsibility | `placeOrder(isGift: Bool)` picks between two code paths | `Boolean Control Coupling` (warning) |
 | `solid/l-downcast` | Liskov substitution | The view model downcasts its injected store to `CoreDataOrderStore` | `Swallowed Injection Downcast` (info) |
