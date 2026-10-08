@@ -66,10 +66,12 @@ before:
 "$SWIFTPROJECTLINT" . --config .swiftprojectlint-solid.yml
 ```
 
-On `main` that config reports one finding: `Direct Instantiation` at
-`CheckoutApp.swift:7`. That's the composition root, where constructing the
-store is correct. The rule exempts composition roots, but only recognises
-larger ones, so it's a false positive the essay discusses.
+On `main` that config reports nothing. It used to report one finding,
+`Direct Instantiation` at `CheckoutApp.swift:7`: the composition root, where
+constructing the store is correct. The rule recognised only larger roots, so
+it was a false positive. SwiftProjectLint now exempts an `App`'s stored
+properties as it already did its `init()`, and the essay tells the finding as
+reported, then fixed.
 
 | Branch | Principle | The change | What reports it |
 |---|---|---|---|
