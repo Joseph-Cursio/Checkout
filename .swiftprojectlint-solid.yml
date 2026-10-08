@@ -17,6 +17,7 @@ enabled_only:
   # Interface segregation
   - "Fat Protocol"
   - "Too Many Environment Objects"
+  - "Unused Protocol Requirement"
   # Open/closed: changes the compiler can't point to
   - "String Switch Over Enum"
   - "Parallel List Drift"
